@@ -8,13 +8,13 @@ export const signup = async (req,res)=>{
         const {fullname,username, password,confirmpassword,gender} = req.body;
 
         if(password!=confirmpassword){
-            res.status(400).json({error:"password and confirm password donot match"})
+            return res.status(400).json({error:"password and confirm password donot match"})
         }
 
         const user = await User.findOne({username});
 
         if(user){
-            res.status(400).json({error:"user already exists"})
+            return res.status(400).json({error:"user already exists"})
         }
 
         //Hashing the password using bcrypt hashing
@@ -33,10 +33,11 @@ export const signup = async (req,res)=>{
         })
         
         if(newuser){
-            generateTokenandsetCookie(newuser._id,res)
             await newuser.save()
 
-            res.status(201).json({
+            generateTokenandsetCookie(newuser._id,res)
+        
+            return res.status(201).json({
             _id:newuser._id,
             fullname: newuser.fullname,
             gender:newuser.gender,
@@ -44,7 +45,7 @@ export const signup = async (req,res)=>{
              })
         }
         else{
-            res.status(400).json({error:"Invalid details"})
+            return res.status(400).json({error:"Invalid details"})
         }
 
 
